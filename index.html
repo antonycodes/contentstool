@@ -1267,6 +1267,15 @@
   .fb-head-m .fb-ava { width: 110px; height: 110px; margin: -55px auto 8px; }
   .fb-head-m .fb-name { font-size: 21px; }
   .fb-head-m .fb-btns { justify-content: center; margin-top: 12px; }
+  /* mobile layout giống FB hiện tại: avatar trái, tên phải, nút full-width */
+  .fb-name { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .fb-badge { width: 19px; height: 19px; border-radius: 50%; background: #1877f2; color: #fff; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  .fb-head-m2 { display: flex; align-items: flex-end; gap: 12px; padding: 0 14px 4px; }
+  .fb-head-m2 .fb-ava { width: 104px; height: 104px; margin-top: -44px; }
+  .fb-head-m2 .fb-name-row { flex: 1; min-width: 0; padding-bottom: 6px; }
+  .fb-head-m2 .fb-name { font-size: 19px; }
+  .fb-head-m2 .fb-meta { margin-top: 3px; line-height: 1.35; }
+  .fb-follow-m { display: block; width: calc(100% - 28px); margin: 10px 14px 12px; padding: 11px; border-radius: 7px; font-size: 15px; }
   </style>
 </head>
 
@@ -1732,7 +1741,7 @@
             <div class="safe safe-ava"></div>
           </div>
           <div class="fb-info">
-            <div class="fb-name sim-name-txt">Tên Fanpage</div>
+            <div class="fb-name"><span class="sim-name-txt">Tên Fanpage</span><span class="fb-badge">✓</span></div>
             <div class="fb-meta">@cellphones · 1,2 Tr người theo dõi</div>
           </div>
           <div class="fb-btns"><button class="fb-blue">+ Theo dõi</button><button class="fb-gray">Nhắn tin</button></div>
@@ -1746,17 +1755,19 @@
           <div class="ph sim-cover-ph">Cover</div>
           <div class="safe safe-cover"><span class="safe-tag">SAFE</span></div>
         </div>
-        <div class="fb-head-m">
+        <div class="fb-head-m2">
           <div class="fb-ava">
             <img class="sim-ava-img" alt="" style="display:none">
             <div class="ph sim-ava-ph">Avatar</div>
             <div class="safe safe-ava"></div>
           </div>
-          <div class="fb-name sim-name-txt">Tên Fanpage</div>
-          <div class="fb-meta">@cellphones · 1,2 Tr người theo dõi</div>
-          <div class="fb-btns"><button class="fb-blue">+ Theo dõi</button><button class="fb-gray">Nhắn tin</button></div>
+          <div class="fb-name-row">
+            <div class="fb-name"><span class="sim-name-txt">Tên Fanpage</span><span class="fb-badge">✓</span></div>
+            <div class="fb-meta">46 triệu người theo dõi · 1,2K bài viết</div>
+          </div>
         </div>
-        <div class="fb-tabs" style="justify-content:center"><span class="act">Bài viết</span><span>Giới thiệu</span><span>Ảnh</span></div>
+        <button class="fb-blue fb-follow-m">＋ Theo dõi</button>
+        <div class="fb-tabs"><span class="act">Tất cả</span><span>Ảnh</span><span>Reels</span><span>Lượt nhắc</span></div>
       </div>
     </div>
     <p class="small" style="text-align:center;max-width:640px;margin:0 auto">Safe zone theo guideline CellphoneS — Cover chừa lề ngang 8.5% / dọc 9.9%, Avatar chừa 8.3% (FB cắt tròn). Giữ nội dung chính trong khung xanh.</p>
