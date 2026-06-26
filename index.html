@@ -1241,8 +1241,9 @@
   .fb-desktop { width: 760px; max-width: 100%; }
   .fb-mobile { width: 380px; max-width: 100%; }
   .fb-cover { position: relative; width: 100%; aspect-ratio: 2.628 / 1; background: linear-gradient(135deg, #cfd4dc, #e4e6eb); overflow: hidden; }
-  /* Mobile FB cắt bớt 2 mép → cover hiển thị cao/vuông hơn (~2.13:1) */
-  .fb-mobile .fb-cover { aspect-ratio: 2.13 / 1; }
+  /* Mobile FB: vùng hiển thị 4751×1754 của cover 5256×2000 — crop trái/phải & đáy, GIỮ mép trên */
+  .fb-mobile .fb-cover { aspect-ratio: 4751 / 1754; }
+  .fb-mobile .fb-cover img { position: absolute; top: 0; left: -5.315%; width: 110.63%; height: auto; }
   .fb-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .fb-cover .ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #8a8f99; font-size: 13px; font-weight: 600; }
   .safe { position: absolute; pointer-events: none; display: none; z-index: 3; }
@@ -1772,7 +1773,7 @@
         <div class="fb-tabs"><span class="act">Tất cả</span><span>Ảnh</span><span>Reels</span><span>Lượt nhắc</span></div>
       </div>
     </div>
-    <p class="small" style="text-align:center;max-width:640px;margin:0 auto">Safe zone theo guideline CellphoneS — Cover chừa lề ngang 8.5% / dọc 9.9%, Avatar chừa 8.3% (FB cắt tròn). Mobile cắt bớt 2 mép trái/phải (cover hiển thị ~2.13:1) → giữ nội dung quan trọng vào giữa, trong khung xanh.</p>
+    <p class="small" style="text-align:center;max-width:640px;margin:0 auto">Safe zone theo guideline CellphoneS — Cover chừa lề ngang 8.5% / dọc 9.9%, Avatar chừa 8.3% (FB cắt tròn). Mobile chỉ hiển thị 4751×1754 của cover 5256×2000 (crop ~252px mỗi mép trái/phải + ~246px đáy, giữ mép trên) → giữ nội dung quan trọng vào giữa-trên, trong khung xanh.</p>
   </div>
 </div><!-- /viewSim -->
 
