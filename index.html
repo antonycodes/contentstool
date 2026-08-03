@@ -1248,8 +1248,10 @@
   .fb-cover .ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #8a8f99; font-size: 13px; font-weight: 600; }
   .safe { position: absolute; pointer-events: none; display: none; z-index: 3; }
   .sim-stage.safe-on .safe { display: block; }
-  .safe-cover { left: 8.54%; right: 8.54%; top: 9.9%; bottom: 9.9%; border: 2px dashed #16a34a; border-radius: 2px; }
-  .safe-tag { position: absolute; top: -10px; left: 8px; background: #16a34a; color: #fff; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 5px; font-family: var(--sans); white-space: nowrap; }
+  /* Safe = vùng hiển thị mobile 4751×1754 trong cover 5256×2000 (giữ mép trên) */
+  .safe-cover { left: 4.80%; right: 4.80%; top: 0; bottom: 12.30%; border: 2px dashed #16a34a; border-radius: 2px; }
+  .fb-mobile .safe-cover { left: 0; right: 0; top: 0; bottom: 0; }
+  .safe-tag { position: absolute; top: 5px; left: 6px; background: #16a34a; color: #fff; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 5px; font-family: var(--sans); white-space: nowrap; }
   .fb-ava { border-radius: 50%; overflow: hidden; border: 4px solid #fff; background: #ccd0d5; position: relative; flex: none; }
   .fb-ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .fb-ava .ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #8a8f99; font-size: 11px; }
@@ -2919,9 +2921,15 @@
         const timeStr = String(now.getMonth() + 1).padStart(2, '0') + String(now.getFullYear()).slice(-2);
         const zip = new JSZip();
         setTimeout(() => {
+          // Khử trùng tên: nhiều dòng khác nhau nhưng trùng 50 ký tự đầu (bị cắt khi đặt tên)
+          // sẽ ra cùng "safe" → nếu không xử lý, zip.file() ghi đè lẫn nhau, ZIP chỉ còn 1 file.
+          const usedNames = new Map();
           canvases.forEach((canvas, i) => {
             const b64 = canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, '');
-            const safe = canvas.dataset.filename || `QRCode_${i + 1}`;
+            let safe = canvas.dataset.filename || `QRCode_${i + 1}`;
+            const seen = usedNames.get(safe) || 0;
+            usedNames.set(safe, seen + 1);
+            if (seen > 0) safe = `${safe}_${seen + 1}`;
             zip.file(`${safe}.png`, b64, { base64: true });
           });
           zip.generateAsync({ type: 'blob' }).then(content => {
