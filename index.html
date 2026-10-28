@@ -879,6 +879,12 @@
       flex-wrap: wrap;
     }
 
+    .qr-pins { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+    .qr-pin { position:relative; display:flex; align-items:center; gap:6px; padding:5px 28px 5px 7px; border:1px solid var(--line-strong); border-radius:10px; background:#fff; cursor:pointer; font:12px var(--sans); }
+    .qr-pin img { width:26px; height:26px; object-fit:contain; }
+    .qr-pin.active { border-color:var(--acc-solid); box-shadow:0 0 0 2px rgba(220,38,38,.15); }
+    .qr-pin-del { position:absolute; right:6px; top:3px; color:#ef5a78; font-weight:bold; }
+
     .qr-actions .qr-status {
       margin-right: auto;
       font-weight: 600;
@@ -1670,6 +1676,12 @@
               <input type="file" accept="image/*" id="qrLogoInput">
             </label>
           </div>
+          <div class="small" style="margin-top:8px">Logo được lưu trên trình duyệt này. Chọn logo ghim để dùng; ghim logo hiện tại bằng nút bên dưới.</div>
+          <div class="qr-actions" style="justify-content:flex-start;margin-top:8px">
+            <input id="qrLogoName" type="text" placeholder="Tên logo" aria-label="Tên logo ghim" style="width:150px;padding:7px 9px;font-size:12px">
+            <button class="btn secondary" id="qrPinLogo" style="padding:6px 9px;font-size:12px">📌 Ghim</button>
+          </div>
+          <div class="qr-pins" id="qrPinnedLogos"></div>
           <div class="qr-actions">
             <span class="small qr-status" id="qrStatus"></span>
             <button class="btn secondary" id="qrClear">🗑 Xóa hết</button>
@@ -2802,6 +2814,27 @@
     <script>
       // ============ QR MAKER ============
       let qrLogoImg = null;
+      const qrPinsKey = 'contentTools.qrPinnedLogos';
+      let qrPinnedLogos = [];
+      try { qrPinnedLogos = JSON.parse(localStorage.getItem(qrPinsKey) || '[]'); if (!Array.isArray(qrPinnedLogos)) qrPinnedLogos = []; } catch (_) { qrPinnedLogos = []; }
+      function qrRenderPins() {
+        const list = document.getElementById('qrPinnedLogos'); list.innerHTML = '';
+        qrPinnedLogos.forEach((pin, i) => {
+          const item = document.createElement('button'); item.type = 'button'; item.className = 'qr-pin' + (qrLogoImg && qrLogoImg.src === pin.src ? ' active' : '');
+          const img = document.createElement('img'); img.src = pin.src; img.alt = '';
+          const name = document.createElement('span'); name.textContent = pin.name;
+          const del = document.createElement('span'); del.className = 'qr-pin-del'; del.textContent = '×'; del.title = 'Bỏ ghim';
+          item.append(img, name, del);
+          item.addEventListener('click', () => { qrSetLogo(pin.src); });
+          del.addEventListener('click', e => { e.stopPropagation(); qrPinnedLogos.splice(i, 1); localStorage.setItem(qrPinsKey, JSON.stringify(qrPinnedLogos)); qrRenderPins(); });
+          list.appendChild(item);
+        });
+      }
+      function qrSetLogo(src) {
+        const wrap = document.getElementById('qrLogoUp'); wrap.classList.add('has-img'); wrap.querySelector('.thumb').src = src;
+        qrLogoImg = new Image(); qrLogoImg.src = src; qrRenderPins();
+      }
+      qrRenderPins();
       function qrStatus(msg, color) {
         const el = document.getElementById('qrStatus');
         el.textContent = msg; el.style.color = color || 'var(--muted)';
@@ -2812,11 +2845,16 @@
         const f = e.target.files[0]; if (!f) return;
         const r = new FileReader();
         r.onload = ev => {
-          const wrap = document.getElementById('qrLogoUp');
-          wrap.classList.add('has-img'); wrap.querySelector('.thumb').src = ev.target.result;
-          qrLogoImg = new Image(); qrLogoImg.src = ev.target.result;
+          qrSetLogo(ev.target.result);
         };
         r.readAsDataURL(f);
+      });
+      document.getElementById('qrPinLogo').addEventListener('click', () => {
+        if (!qrLogoImg || !qrLogoImg.src) { qrStatus('Hãy chọn logo trước khi ghim.', '#ef5a78'); return; }
+        if (qrPinnedLogos.some(pin => pin.src === qrLogoImg.src)) { qrStatus('Logo này đã được ghim.', '#d97706'); return; }
+        const name = document.getElementById('qrLogoName').value.trim() || document.getElementById('qrLogoInput').files[0]?.name || `Logo ${qrPinnedLogos.length + 1}`;
+        try { qrPinnedLogos.push({ name, src: qrLogoImg.src }); localStorage.setItem(qrPinsKey, JSON.stringify(qrPinnedLogos)); qrRenderPins(); qrStatus('✓ Đã ghim logo trên trình duyệt này.', '#16a34a'); }
+        catch (_) { qrPinnedLogos.pop(); qrStatus('Không lưu được. Ảnh có thể vượt dung lượng localStorage.', '#ef5a78'); }
       });
       document.getElementById('qrLogoClear').addEventListener('click', e => {
         e.preventDefault(); e.stopPropagation();
